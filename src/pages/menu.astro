@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const categories = [
+  {
+    name: 'Para empezar',
+    desc: 'Pequeños bocados pensados para abrir la mesa y la conversación.',
+    items: [
+      { name: 'Aceitunas en salmuera de cítricos', desc: 'Manzanilla cacereña curada en casa con piel de naranja sanguina.', price: '6' },
+      { name: 'Tartar de atún rojo', desc: 'Encurtidos de la huerta, aceite de hueso ahumado y wasabi fresco.', price: '22' },
+      { name: 'Croquetas de gallina vieja', desc: 'Hechas con caldo de 24 horas. Cinco unidades, ni una más.', price: '14' },
+      { name: 'Tomate en su jugo', desc: 'Tomate raf de Almería, anchoa del Cantábrico, albahaca morada.', price: '16' },
+    ],
+  },
+  {
+    name: 'De la huerta',
+    desc: 'Vegetales tratados con la misma intensidad que un buen lomo.',
+    items: [
+      { name: 'Alcachofa a la brasa', desc: 'Carbón de encina, yema curada, romesco ligero.', price: '18' },
+      { name: 'Risotto carnaroli y hongos', desc: 'Boletus del Pirineo, mantequilla noisette, parmesano 36 meses.', price: '24' },
+      { name: 'Berenjena ahumada', desc: 'Miso de garbanzo, granada y semillas tostadas.', price: '17' },
+    ],
+  },
+  {
+    name: 'Del fuego',
+    desc: 'Carne y pescado pasados por brasa. Tiempo, sal, paciencia.',
+    items: [
+      { name: 'Cordero a doce horas', desc: 'Lechal de Lanzarote, hierbas serranas, miel de romero.', price: '32' },
+      { name: 'Lubina salvaje en sal', desc: 'Costra de sal, hinojo, limón confitado, verduras de temporada.', price: '36' },
+      { name: 'Solomillo de vaca rubia', desc: 'Maduración 45 días, jugo concentrado, patata soufflé.', price: '38' },
+      { name: 'Pulpo a la brasa', desc: 'Patata violeta, alioli ligero de azafrán.', price: '28' },
+    ],
+  },
+  {
+    name: 'Para terminar',
+    desc: 'Postres pequeños, intensos, hechos con la pastelera del barrio.',
+    items: [
+      { name: 'Soufflé de chocolate', desc: 'Cacao 72% de Madagascar, helado de vainilla bourbon, polvo de oro.', price: '12' },
+      { name: 'Tarta de queso fundida', desc: 'Idiazábal, frutos rojos macerados en vinagre de Jerez.', price: '11' },
+      { name: 'Cítricos en almíbar', desc: 'Naranja sanguina, pomelo, kumquat, sorbete de mandarina.', price: '10' },
+    ],
+  },
+];
+---
+
+<Layout title="Menú — Bracero">
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">— 03 / Menú</span>
+      <h1 data-reveal-lines>Lo que <em>hoy</em> nos parece bueno.</h1>
+      <p class="fade-up" style="margin-top: 1.6rem; color: var(--ink-dim);">La carta cambia con la temporada. Esto es lo que cocinamos esta semana.</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    {categories.map((cat) => (
+      <article class="menu-cat fade-up">
+        <header>
+          <h2>{cat.name}</h2>
+          <p class="cat-desc">{cat.desc}</p>
+        </header>
+        <div class="menu-items">
+          {cat.items.map((it) => (
+            <div class="menu-item">
+              <h3>{it.name}</h3>
+              <div class="price">{it.price} €</div>
+              <p class="desc">{it.desc}</p>
+            </div>
+          ))}
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <section class="cta">
+    <div class="wrap">
+      <h2 data-reveal-lines>Hambre <em>ya</em>.</h2>
+      <a href={`${import.meta.env.BASE_URL}reservas`} class="btn fade-up" style="margin-top: 2rem;">Reservar mesa <span class="arrow">→</span></a>
+    </div>
+  </section>
+</Layout>

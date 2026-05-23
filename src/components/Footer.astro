@@ -1,0 +1,40 @@
+---
+const base = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="wrap">
+    <div>
+      <a href={base} class="brand" style="color: var(--ink); font-size: 1.6rem;">Bracero<em style="color: var(--copper-2); font-style: normal;">.</em></a>
+      <p style="margin-top: 1rem; max-width: 28ch;">Cocina de raíz, producto de cercanía y fuego lento. Una mesa para celebrar lo cotidiano.</p>
+    </div>
+    <div>
+      <h4>Visítanos</h4>
+      <ul>
+        <li>Calle del Olivo, 14</li>
+        <li>28012 · Madrid</li>
+        <li>+34 910 000 000</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Horario</h4>
+      <ul>
+        <li>Mar – Jue · 13–16 / 20–23</li>
+        <li>Vie – Sáb · 13–16 / 20–00</li>
+        <li>Dom · 13–16</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Social</h4>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">The Fork</a></li>
+        <li><a href="#">Newsletter</a></li>
+      </ul>
+    </div>
+    <div class="legal" style="grid-column: 1 / -1;">
+      <span>© {year} Bracero · Todos los derechos reservados</span>
+      <span>Diseño por la casa</span>
+    </div>
+  </div>
+</footer>

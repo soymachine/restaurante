@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+---
+<Layout title="Historia — Bracero">
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">— 02 / Historia</span>
+      <h1 data-reveal-lines>Diez años cocinando el mismo gesto.</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap grid-2">
+      <div class="story-text">
+        <p class="fade-up">En 2014, Lucía Bravo abrió la puerta de un local pequeño en Lavapiés con una idea testaruda: cocinar lo que el mercado decidiese cada mañana. Sin carta, sin certezas, sin más promesa que la honestidad de los ingredientes.</p>
+        <p class="fade-up">Hoy Bracero sigue siendo una mesa íntima, doce comensales por servicio, donde la brasa es protagonista y el menú cambia con la luz del año.</p>
+        <p class="fade-up">Trabajamos con productores que llamamos por su nombre. Quesos del valle del Roncal. Verduras de Aranjuez. Pescados que llegan en hielo desde Cantabria. Vinos naturales de gente que vendimia con la mano.</p>
+      </div>
+      <div class="frame" style="aspect-ratio: 3/4;">
+        <img src={img('1438118907704-7718ee9a191a')} alt="Cocina abierta" loading="lazy"/>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--bg-2);">
+    <div class="wrap">
+      <span class="eyebrow fade-up">Filosofía</span>
+      <h2 data-reveal-lines style="margin: 1rem 0 3rem; max-width: 18ch;">Tres principios que sostienen cada plato.</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem;" class="principles">
+        <div class="fade-up">
+          <div style="font-family: var(--serif); font-size: 4rem; color: var(--copper-2); font-style: italic; margin-bottom: 1rem;">i</div>
+          <h3 style="font-style: italic; margin-bottom: .8rem;">Temporada</h3>
+          <p style="color: var(--ink-dim);">Cocinamos lo que crece ahora. Si no es su mes, no está en la mesa.</p>
+        </div>
+        <div class="fade-up">
+          <div style="font-family: var(--serif); font-size: 4rem; color: var(--copper-2); font-style: italic; margin-bottom: 1rem;">ii</div>
+          <h3 style="font-style: italic; margin-bottom: .8rem;">Fuego</h3>
+          <p style="color: var(--ink-dim);">La brasa marca el ritmo. Cada plato pasa por su temperatura justa.</p>
+        </div>
+        <div class="fade-up">
+          <div style="font-family: var(--serif); font-size: 4rem; color: var(--copper-2); font-style: italic; margin-bottom: 1rem;">iii</div>
+          <h3 style="font-style: italic; margin-bottom: .8rem;">Tiempo</h3>
+          <p style="color: var(--ink-dim);">Nada se apresura. Las masas reposan, los caldos esperan, los comensales también.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @media (max-width: 820px) { .principles { grid-template-columns: 1fr !important; } }
+  </style>
+</Layout>

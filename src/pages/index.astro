@@ -1,0 +1,195 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+const dishes = [
+  { n: '01', name: 'Tartar de atún rojo', desc: 'Encurtidos de la huerta, aceite de hueso y wasabi fresco.', img: '1546069901-ba9599a7e63c' },
+  { n: '02', name: 'Cordero a fuego lento', desc: 'Doce horas de brasa, hierbas serranas y miel de romero.', img: '1544025162-d76694265947' },
+  { n: '03', name: 'Risotto carnaroli', desc: 'Hongos del valle, mantequilla noisette y parmesano de 36 meses.', img: '1476124369491-e7addf5db371' },
+  { n: '04', name: 'Lubina salvaje', desc: 'Costra de sal, hinojo, limón confitado y verduras de temporada.', img: '1467003909585-2f8a72700288' },
+  { n: '05', name: 'Soufflé de chocolate', desc: 'Cacao 72%, helado de vainilla bourbon y polvo de oro.', img: '1551024506-0bccd828d307' },
+];
+---
+
+<Layout>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg" data-hero-bg>
+      <img src={img('1414235077428-338989a2e8c0')} alt="Mesa servida con velas" loading="eager" />
+    </div>
+    <div class="wrap">
+      <span class="eyebrow fade-up">Madrid · Desde 2014</span>
+      <h1 data-hero-title>
+        Una mesa.<br />
+        <em>Mil</em> historias.
+      </h1>
+      <div class="hero-meta">
+        <p class="fade-up">Cocina de raíz con la mirada puesta en el producto, el fuego y el tiempo. Una experiencia íntima en el corazón del barrio.</p>
+        <a href={`${import.meta.env.BASE_URL}reservas`} class="btn fade-up">
+          Reservar mesa
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      Desliza
+      <span class="bar"></span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" data-marquee>
+    <div class="marquee-track">
+      <span>Producto de temporada <i class="dot"></i> Brasa de encina <i class="dot"></i> Mesa única <i class="dot"></i> Vinos naturales <i class="dot"></i></span>
+      <span>Producto de temporada <i class="dot"></i> Brasa de encina <i class="dot"></i> Mesa única <i class="dot"></i> Vinos naturales <i class="dot"></i></span>
+    </div>
+  </div>
+
+  <!-- STORY -->
+  <section id="historia">
+    <span class="section-num">— 01 / Historia</span>
+    <div class="wrap grid-2">
+      <div class="frame story-img-wrap">
+        <img src={img('1466637574441-749b8f19452f')} alt="Chef trabajando" loading="lazy" />
+      </div>
+      <div class="story-text">
+        <span class="eyebrow">Nuestra historia</span>
+        <h2 data-reveal-lines>El sabor de lo cotidiano elevado al ritual.</h2>
+        <p class="fade-up">Bracero nació de la obsesión por un gesto simple: cocinar al fuego con lo que la tierra ofrece esa misma semana. Diez años después, seguimos eligiendo a mano cada ingrediente, cada productor, cada vino.</p>
+        <p class="fade-up">No hay carta cerrada. Hay temporada, oficio y una conversación con quien se sienta a la mesa.</p>
+        <p class="sig fade-up">— Lucía Bravo, Chef</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISHES horizontal -->
+  <section class="dishes" id="cocina">
+    <span class="section-num">— 02 / Cocina</span>
+    <div class="wrap">
+      <div class="dishes-head">
+        <h2 data-reveal-lines>Platos que cuentan dónde estamos.</h2>
+        <p class="fade-up">Cinco propuestas que cambian con la estación. Bocados pensados para compartir, recordar y volver.</p>
+      </div>
+    </div>
+    <div class="dishes-track" data-dishes-track>
+      {dishes.map((d) => (
+        <article class="dish">
+          <div class="frame dish-img">
+            <img src={img(d.img, 900)} alt={d.name} loading="lazy" />
+          </div>
+          <div class="dish-num">{d.n}</div>
+          <h3>{d.name}</h3>
+          <p>{d.desc}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="galeria">
+    <span class="section-num">— 03 / Atmósfera</span>
+    <div class="wrap">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; flex-wrap: wrap;">
+        <h2 data-reveal-lines style="max-width: 16ch;">Un espacio que respira con la cocina.</h2>
+        <a href={`${import.meta.env.BASE_URL}galeria`} class="btn fade-up">Ver galería <span class="arrow">→</span></a>
+      </div>
+      <div class="gallery-grid">
+        <div class="frame g1"><img src={img('1517248135467-4c7edcad34c4')} alt="Sala" loading="lazy"/></div>
+        <div class="frame g2"><img src={img('1414235077428-338989a2e8c0')} alt="Mesa" loading="lazy"/></div>
+        <div class="frame g3"><img src={img('1559339352-11d035aa65de')} alt="Vino" loading="lazy"/></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="cta-bg">
+      <img src={img('1424847651672-bf20a4b0982b')} alt="" loading="lazy"/>
+    </div>
+    <div class="wrap">
+      <span class="eyebrow fade-up">Reservas</span>
+      <h2 data-reveal-lines>Una mesa <em>te espera</em>.</h2>
+      <p class="fade-up">Aforo reducido. Recomendamos reservar con antelación, especialmente fines de semana.</p>
+      <a href={`${import.meta.env.BASE_URL}reservas`} class="btn fade-up">Reservar ahora <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      const gsap = (window as any).gsap;
+      const ScrollTrigger = (window as any).ScrollTrigger;
+      if (!gsap || !ScrollTrigger) return;
+
+      // Hero entrance: split words of title manually
+      const title = document.querySelector<HTMLElement>('[data-hero-title]');
+      if (title) {
+        const html = title.innerHTML;
+        const parts = html.split('<br>');
+        title.innerHTML = parts.map((line) => {
+          const words = line.trim().split(/\s+/);
+          return words.map((w) => `<span style="display:inline-block;overflow:hidden;vertical-align:top;"><span class="hero-w" style="display:inline-block;transform:translateY(110%);">${w}&nbsp;</span></span>`).join('');
+        }).join('<br>');
+        gsap.to('.hero-w', {
+          y: 0,
+          duration: 1.4,
+          ease: 'expo.out',
+          stagger: 0.08,
+          delay: 0.1,
+        });
+      }
+
+      // Hero bg parallax
+      gsap.to('[data-hero-bg] img', {
+        yPercent: 18,
+        scale: 1.05,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+
+      // Marquee continuous scroll, accelerated by user scroll
+      const track = document.querySelector<HTMLElement>('[data-marquee] .marquee-track');
+      if (track) {
+        const tween = gsap.to(track, {
+          xPercent: -50,
+          duration: 30,
+          ease: 'none',
+          repeat: -1,
+        });
+        ScrollTrigger.create({
+          trigger: '[data-marquee]',
+          start: 'top bottom',
+          end: 'bottom top',
+          onUpdate: (self: any) => {
+            tween.timeScale(1 + Math.abs(self.getVelocity() / 1200));
+          },
+        });
+      }
+
+      // Horizontal pinned dishes
+      const dt = document.querySelector<HTMLElement>('[data-dishes-track]');
+      if (dt && window.innerWidth > 820) {
+        const distance = dt.scrollWidth - window.innerWidth + 80;
+        gsap.to(dt, {
+          x: -distance,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.dishes',
+            start: 'top top',
+            end: () => `+=${distance + 200}`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+      }
+    });
+  </script>
+</Layout>

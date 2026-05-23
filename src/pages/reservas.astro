@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+---
+<Layout title="Reservas — Bracero">
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">— 05 / Reservas</span>
+      <h1 data-reveal-lines>Una mesa, <em>tu</em> noche.</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap grid-2">
+      <div>
+        <p class="fade-up" style="color: var(--ink-dim); margin-bottom: 1rem;">Servicio de comida y cena. Confirmamos cada reserva por correo en menos de 24 horas.</p>
+        <p class="fade-up" style="color: var(--ink-dim);">Si quieres reservar la mesa completa (hasta 12 personas) o consultar menús privados, escríbenos directamente a <a href="mailto:hola@bracero.es" style="color: var(--copper-2);">hola@bracero.es</a>.</p>
+
+        <form class="form-grid fade-up" onsubmit="event.preventDefault(); this.querySelector('.confirm').style.opacity='1';">
+          <div class="field">
+            <label for="name">Nombre</label>
+            <input id="name" type="text" required />
+          </div>
+          <div class="field">
+            <label for="email">Correo</label>
+            <input id="email" type="email" required />
+          </div>
+          <div class="field">
+            <label for="date">Fecha</label>
+            <input id="date" type="date" required />
+          </div>
+          <div class="field">
+            <label for="time">Hora</label>
+            <select id="time">
+              <option>13:00</option><option>13:30</option><option>14:00</option><option>14:30</option>
+              <option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option><option>22:00</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="people">Comensales</label>
+            <select id="people">
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="phone">Teléfono</label>
+            <input id="phone" type="tel" />
+          </div>
+          <div class="field field-full">
+            <label for="notes">Notas (alergias, ocasión...)</label>
+            <textarea id="notes" rows="3"></textarea>
+          </div>
+          <div class="form-submit">
+            <button class="btn" type="submit">Confirmar solicitud <span class="arrow">→</span></button>
+            <p class="confirm" style="opacity: 0; color: var(--copper-2); margin-top: 1.5rem; font-family: var(--serif); font-style: italic; transition: opacity .6s var(--ease);">Recibido. Te escribimos en breve.</p>
+          </div>
+        </form>
+      </div>
+      <div class="frame" style="aspect-ratio: 3/4;">
+        <img src={img('1414235077428-338989a2e8c0')} alt="Mesa preparada" loading="lazy"/>
+      </div>
+    </div>
+  </section>
+</Layout>

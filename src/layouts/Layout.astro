@@ -1,0 +1,206 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Bracero — Cocina de raíz',
+  description = 'Restaurante de cocina contemporánea con producto de temporada. Reservas y carta.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0e0d0b" />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <ViewTransitions />
+  </head>
+  <body>
+    <div class="cursor" aria-hidden="true"></div>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      import { gsap } from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Make available globally for page-level scripts
+      (window as any).gsap = gsap;
+      (window as any).ScrollTrigger = ScrollTrigger;
+
+      function initCursor() {
+        const cursor = document.querySelector<HTMLElement>('.cursor');
+        if (!cursor) return;
+        let x = window.innerWidth / 2, y = window.innerHeight / 2;
+        let tx = x, ty = y;
+        const move = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY; };
+        window.addEventListener('mousemove', move);
+        const tick = () => {
+          x += (tx - x) * 0.18;
+          y += (ty - y) * 0.18;
+          cursor.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+          requestAnimationFrame(tick);
+        };
+        tick();
+        const hover = (e: Event) => {
+          const t = e.target as HTMLElement;
+          if (t.closest('a, button, .frame, .field input, .field select, .field textarea')) {
+            cursor.classList.add('is-hover');
+          } else {
+            cursor.classList.remove('is-hover');
+          }
+        };
+        document.addEventListener('mouseover', hover);
+      }
+
+      function initNav() {
+        const nav = document.querySelector<HTMLElement>('.nav');
+        const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+        const overlay = document.querySelector<HTMLElement>('.overlay');
+        if (!nav || !toggle || !overlay) return;
+
+        const onScroll = () => {
+          nav.classList.toggle('is-scrolled', window.scrollY > 40);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        const closeMenu = () => {
+          overlay.classList.remove('is-open');
+          toggle.textContent = 'Menú';
+        };
+        toggle.addEventListener('click', () => {
+          const open = overlay.classList.toggle('is-open');
+          toggle.textContent = open ? 'Cerrar' : 'Menú';
+        });
+        overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+      }
+
+      function initReveals() {
+        const gsap = (window as any).gsap;
+        const ScrollTrigger = (window as any).ScrollTrigger;
+
+        // Split lines: wrap with reveal-line spans
+        document.querySelectorAll<HTMLElement>('[data-reveal-lines]').forEach((el) => {
+          const text = el.textContent?.trim() ?? '';
+          const words = text.split(/\s+/);
+          el.innerHTML = '';
+          words.forEach((w, i) => {
+            const line = document.createElement('span');
+            line.className = 'reveal-word';
+            line.style.display = 'inline-block';
+            line.style.overflow = 'hidden';
+            line.style.verticalAlign = 'top';
+            const inner = document.createElement('span');
+            inner.style.display = 'inline-block';
+            inner.style.transform = 'translateY(110%)';
+            inner.textContent = w + (i < words.length - 1 ? ' ' : '');
+            line.appendChild(inner);
+            el.appendChild(line);
+          });
+        });
+
+        gsap.utils.toArray<HTMLElement>('[data-reveal-lines]').forEach((el) => {
+          const inners = el.querySelectorAll('.reveal-word > span');
+          gsap.to(inners, {
+            y: 0,
+            duration: 1.1,
+            ease: 'expo.out',
+            stagger: 0.06,
+            scrollTrigger: { trigger: el, start: 'top 85%' },
+          });
+        });
+
+        gsap.utils.toArray<HTMLElement>('.fade-up').forEach((el) => {
+          gsap.to(el, {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: 'expo.out',
+            scrollTrigger: { trigger: el, start: 'top 85%' },
+          });
+        });
+
+        gsap.utils.toArray<HTMLElement>('.frame').forEach((el) => {
+          const mask = document.createElement('div');
+          mask.className = 'frame-mask';
+          el.prepend(mask);
+          gsap.to(mask, {
+            scaleY: 0,
+            duration: 1.4,
+            ease: 'expo.inOut',
+            scrollTrigger: { trigger: el, start: 'top 85%' },
+          });
+          const img = el.querySelector('img');
+          if (img) {
+            gsap.fromTo(img,
+              { scale: 1.3 },
+              {
+                scale: 1.05,
+                duration: 1.8,
+                ease: 'expo.out',
+                scrollTrigger: { trigger: el, start: 'top 85%' },
+              }
+            );
+            gsap.to(img, {
+              yPercent: -8,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              },
+            });
+          }
+        });
+      }
+
+      function init() {
+        initCursor();
+        initNav();
+        initReveals();
+      }
+
+      // Run on first load + after every view transition
+      document.addEventListener('astro:page-load', () => {
+        const ScrollTrigger = (window as any).ScrollTrigger;
+        if (ScrollTrigger) ScrollTrigger.getAll().forEach((t: any) => t.kill());
+        init();
+      });
+    </script>
+
+    <!-- Off-canvas menu overlay -->
+    <div class="overlay" id="menu-overlay">
+      <ul class="overlay-nav">
+        <li><a href={import.meta.env.BASE_URL} data-num="01">Inicio</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}historia`} data-num="02">Historia</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}menu`} data-num="03">Menú</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}galeria`} data-num="04">Galería</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}reservas`} data-num="05">Reservas</a></li>
+      </ul>
+    </div>
+  </body>
+</html>
