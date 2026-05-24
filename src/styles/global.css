@@ -253,7 +253,7 @@ button.btn {
   /* transform handled by GSAP; keep only colour transition */
   transition: color .4s var(--ease);
 }
-.overlay-nav a:hover { color: var(--copper-2); font-style: italic; }
+.overlay-nav a:hover { color: var(--copper-2); }
 .overlay-nav a::after {
   content: attr(data-num);
   position: absolute;

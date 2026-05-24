@@ -93,6 +93,7 @@ const {
 
         const openMenu = () => {
           if (tl) tl.kill();
+          gsap.set(links, { opacity: 1, yPercent: 110 });
           overlay.classList.add('is-open');
           tl = gsap.timeline();
           tl.to(overlay, { yPercent: 0, duration: 0.7, ease: 'expo.inOut' });
@@ -106,9 +107,14 @@ const {
           tl = gsap.timeline({
             onComplete: () => overlay.classList.remove('is-open'),
           });
-          tl.to(links, { yPercent: 110, duration: 0.35, ease: 'expo.in', stagger: { each: 0.05, from: 'end' } });
-          tl.to(overlay, { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, '-=0.1');
+          tl.to(links, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+          tl.to(overlay, { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, '-=0.05');
         };
+
+        links.forEach((a) => {
+          a.addEventListener('mouseenter', () => gsap.to(a, { x: 14, duration: 0.4, ease: 'expo.out' }));
+          a.addEventListener('mouseleave', () => gsap.to(a, { x: 0, duration: 0.5, ease: 'expo.out' }));
+        });
 
         const onScroll = () => {
           nav.classList.toggle('is-scrolled', window.scrollY > 40);
