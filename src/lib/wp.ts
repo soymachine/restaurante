@@ -5,8 +5,11 @@
  * ────────────────────────────
  * Plugins:
  *   1. Advanced Custom Fields (gratis, wordpress.org)
- *   2. ACF to REST API (gratis, wordpress.org)
- *   3. Custom Post Type UI (gratis, wordpress.org)
+ *   2. Custom Post Type UI (gratis, wordpress.org)
+ *
+ * NO se necesita "ACF to REST API": ACF 5.11+ expone campos nativamente con
+ * "Show in REST API: Yes" en el field group. Para la Options Page se usa el
+ * endpoint propio /bracero/v1/options definido en functions.php del tema.
  *
  * Custom Post Type vía CPT UI:
  *   Slug: plato | Show in REST: true | Supports: title, excerpt
@@ -115,15 +118,14 @@ interface RawPost {
   };
 }
 
+// Respuesta del endpoint propio /bracero/v1/options (definido en functions.php)
 interface RawOptions {
-  acf?: {
-    telefono?: string;
-    email_contacto?: string;
-    horario_comida?: string;
-    horario_cena?: string;
-    notas_reservas?: string;
-    galeria?: Array<{ id: number; url: string; alt: string }>;
-  };
+  telefono?: string;
+  email_contacto?: string;
+  horario_comida?: string;
+  horario_cena?: string;
+  notas_reservas?: string;
+  galeria?: Array<{ id: number; url: string; alt: string }>;
 }
 
 // ── fetchers ───────────────────────────────────────────────────────────────
@@ -165,21 +167,20 @@ export async function fetchPost(slug: string): Promise<WpPost | null> {
 }
 
 export async function fetchReservationInfo(): Promise<WpReservationInfo | null> {
-  const opts = await wpGet<RawOptions>('/acf/v1/options');
-  const acf = opts?.acf;
-  if (!acf) return null;
+  const opts = await wpGet<RawOptions>('/bracero/v1/options');
+  if (!opts) return null;
   return {
-    telefono: acf.telefono ?? '',
-    email: acf.email_contacto ?? '',
-    horarioComida: acf.horario_comida ?? '',
-    horarioCena: acf.horario_cena ?? '',
-    notas: acf.notas_reservas ?? '',
+    telefono: opts.telefono ?? '',
+    email: opts.email_contacto ?? '',
+    horarioComida: opts.horario_comida ?? '',
+    horarioCena: opts.horario_cena ?? '',
+    notas: opts.notas_reservas ?? '',
   };
 }
 
 export async function fetchGallery(): Promise<WpGalleryImage[] | null> {
-  const opts = await wpGet<RawOptions>('/acf/v1/options');
-  const galeria = opts?.acf?.galeria;
+  const opts = await wpGet<RawOptions>('/bracero/v1/options');
+  const galeria = opts?.galeria;
   if (!galeria?.length) return null;
   return galeria.map((img) => ({ id: img.id, url: img.url, alt: img.alt }));
 }
