@@ -118,7 +118,7 @@ interface RawPost {
   };
 }
 
-// ACF fields from the "Bracero Settings" private page (slug: bracero-settings)
+// ACF fields from the "Bracero Settings" page (slug: bracero-settings)
 interface RawSettings {
   acf?: {
     telefono?: string;
@@ -126,12 +126,17 @@ interface RawSettings {
     horario_comida?: string;
     horario_cena?: string;
     notas_reservas?: string;
-    // Gallery returns IDs (int[]) or full objects depending on ACF version
-    galeria?: number[] | Array<{ id: number; url: string; alt: string }>;
   };
 }
 
-// Fetches the settings page once and caches within the same build request
+interface RawGaleriaItem {
+  id: number;
+  _embedded?: {
+    'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string }>;
+  };
+}
+
+// Fetches the settings page once per build
 async function fetchSettings(): Promise<RawSettings['acf'] | null> {
   const pages = await wpGet<RawSettings[]>(
     '/wp/v2/pages?slug=bracero-settings&_fields=acf',
@@ -190,27 +195,18 @@ export async function fetchReservationInfo(): Promise<WpReservationInfo | null> 
 }
 
 export async function fetchGallery(): Promise<WpGalleryImage[] | null> {
-  const acf = await fetchSettings();
-  const galeria = acf?.galeria;
-  if (!galeria?.length) return null;
+  const items = await wpGet<RawGaleriaItem[]>(
+    '/wp/v2/galeria_item?per_page=20&_embed=wp:featuredmedia&orderby=date&order=asc',
+  );
+  if (!items?.length) return null;
 
-  // ACF Free returns image IDs (number[]); resolve each to its URL
-  if (typeof galeria[0] === 'number') {
-    const images = await Promise.all(
-      (galeria as number[]).map((id) =>
-        wpGet<{ id: number; source_url: string; alt_text: string }>(`/wp/v2/media/${id}`),
-      ),
-    );
-    return images
-      .filter(Boolean)
-      .map((img) => ({ id: img!.id, url: img!.source_url, alt: img!.alt_text }));
-  }
-
-  return (galeria as Array<{ id: number; url: string; alt: string }>).map((img) => ({
-    id: img.id,
-    url: img.url,
-    alt: img.alt,
-  }));
+  return items
+    .map((item) => {
+      const media = item._embedded?.['wp:featuredmedia']?.[0];
+      if (!media) return null;
+      return { id: item.id, url: media.source_url, alt: media.alt_text };
+    })
+    .filter((img): img is WpGalleryImage => img !== null);
 }
 
 // ── private helpers ────────────────────────────────────────────────────────
