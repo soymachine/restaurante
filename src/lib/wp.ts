@@ -104,7 +104,7 @@ interface RawPlato {
   title: { rendered: string };
   excerpt: { rendered: string };
   categoria_plato: number[];
-  acf?: { precio?: string };
+  acf?: { price?: string };
 }
 
 interface RawPost {
@@ -161,7 +161,7 @@ export async function fetchMenu(): Promise<WpMenuCategory[] | null> {
       .map((p) => ({
         nombre: p.title.rendered,
         descripcion: stripTags(p.excerpt.rendered),
-        precio: p.acf?.precio ?? '',
+        precio: p.acf?.price ?? '',
       })),
   }));
 }
