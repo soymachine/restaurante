@@ -125,10 +125,11 @@ const dishes = [
       // Hero entrance: split words of title manually
       const title = document.querySelector<HTMLElement>('[data-hero-title]');
       if (title) {
-        const html = title.innerHTML;
-        const parts = html.split('<br>');
+        // Strip Astro dev-mode attributes before processing innerHTML
+        const html = title.innerHTML.replace(/\s*data-astro-\S+="[^"]*"/g, '');
+        const parts = html.split(/<br\s*\/?>/i);
         title.innerHTML = parts.map((line) => {
-          const words = line.trim().split(/\s+/);
+          const words = line.trim().split(/\s+/).filter(Boolean);
           return words.map((w) => `<span style="display:inline-block;overflow:hidden;vertical-align:top;"><span class="hero-w" style="display:inline-block;transform:translateY(110%);">${w}&nbsp;</span></span>`).join('');
         }).join('<br>');
         gsap.to('.hero-w', {
