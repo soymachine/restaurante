@@ -111,8 +111,10 @@ const {
             const line = document.createElement('span');
             line.className = 'reveal-word';
             line.style.display = 'inline-block';
-            line.style.overflow = 'hidden';
+            line.style.overflow = 'visible';
             line.style.verticalAlign = 'top';
+            line.style.paddingBottom = '0.2em';
+            line.style.marginBottom = '-0.2em';
             const inner = document.createElement('span');
             inner.style.display = 'inline-block';
             inner.style.transform = 'translateY(110%)';
