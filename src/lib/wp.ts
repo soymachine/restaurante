@@ -8,23 +8,23 @@
  *   2. Custom Post Type UI (gratis, wordpress.org)
  *
  * NO se necesita "ACF to REST API": ACF 5.11+ expone campos nativamente con
- * "Show in REST API: Yes" en el field group. Para la Options Page se usa el
- * endpoint propio /bracero/v1/options definido en functions.php del tema.
+ * "Show in REST API: Yes" en el field group.
  *
  * Custom Post Type vía CPT UI:
- *   Slug: plato | Show in REST: true | Supports: title, excerpt
+ *   Slug: platos | Show in REST: true | Supports: title, excerpt
  *
  * Taxonomía vía CPT UI:
- *   Slug: categoria_plato | Asociada a: plato | Show in REST: true
- *   Crear las categorías: "Para empezar", "De la huerta", "Del fuego", "Para terminar"
+ *   Slug: categoria_plato | Asociada a: platos | Show in REST: true
+ *   Categorías: "To start", "From the garden", "From the fire", "To finish"
  *
  * ACF → Field Groups:
- *   Grupo "Datos del plato" → ubicación: Post Type = plato
+ *   Grupo "Plato" → ubicación: Post Type = platos
  *     - precio (Field type: Text, Field key: precio)
+ *     Show in REST API: Yes
  *
- *   Grupo "Ajustes del restaurante" → ubicación: Options Page
- *     Primero registrar la Options Page en functions.php del tema:
- *       acf_add_options_page(['page_title'=>'Ajustes','menu_slug'=>'bracero-ajustes']);
+ *   Grupo "Restaurant Settings" → ubicación: Page = "Bracero Settings"
+ *     (crear Page con slug "bracero-settings", publicada, sin añadir al menú)
+ *     Show in REST API: Yes
  *     Campos:
  *       - telefono        (Text)
  *       - email_contacto  (Email)
@@ -118,14 +118,25 @@ interface RawPost {
   };
 }
 
-// Respuesta del endpoint propio /bracero/v1/options (definido en functions.php)
-interface RawOptions {
-  telefono?: string;
-  email_contacto?: string;
-  horario_comida?: string;
-  horario_cena?: string;
-  notas_reservas?: string;
-  galeria?: Array<{ id: number; url: string; alt: string }>;
+// ACF fields from the "Bracero Settings" private page (slug: bracero-settings)
+interface RawSettings {
+  acf?: {
+    telefono?: string;
+    email_contacto?: string;
+    horario_comida?: string;
+    horario_cena?: string;
+    notas_reservas?: string;
+    // Gallery returns IDs (int[]) or full objects depending on ACF version
+    galeria?: number[] | Array<{ id: number; url: string; alt: string }>;
+  };
+}
+
+// Fetches the settings page once and caches within the same build request
+async function fetchSettings(): Promise<RawSettings['acf'] | null> {
+  const pages = await wpGet<RawSettings[]>(
+    '/wp/v2/pages?slug=bracero-settings&_fields=acf',
+  );
+  return pages?.[0]?.acf ?? null;
 }
 
 // ── fetchers ───────────────────────────────────────────────────────────────
@@ -167,22 +178,39 @@ export async function fetchPost(slug: string): Promise<WpPost | null> {
 }
 
 export async function fetchReservationInfo(): Promise<WpReservationInfo | null> {
-  const opts = await wpGet<RawOptions>('/bracero/v1/options');
-  if (!opts) return null;
+  const acf = await fetchSettings();
+  if (!acf) return null;
   return {
-    telefono: opts.telefono ?? '',
-    email: opts.email_contacto ?? '',
-    horarioComida: opts.horario_comida ?? '',
-    horarioCena: opts.horario_cena ?? '',
-    notas: opts.notas_reservas ?? '',
+    telefono: acf.telefono ?? '',
+    email: acf.email_contacto ?? '',
+    horarioComida: acf.horario_comida ?? '',
+    horarioCena: acf.horario_cena ?? '',
+    notas: acf.notas_reservas ?? '',
   };
 }
 
 export async function fetchGallery(): Promise<WpGalleryImage[] | null> {
-  const opts = await wpGet<RawOptions>('/bracero/v1/options');
-  const galeria = opts?.galeria;
+  const acf = await fetchSettings();
+  const galeria = acf?.galeria;
   if (!galeria?.length) return null;
-  return galeria.map((img) => ({ id: img.id, url: img.url, alt: img.alt }));
+
+  // ACF Free returns image IDs (number[]); resolve each to its URL
+  if (typeof galeria[0] === 'number') {
+    const images = await Promise.all(
+      (galeria as number[]).map((id) =>
+        wpGet<{ id: number; source_url: string; alt_text: string }>(`/wp/v2/media/${id}`),
+      ),
+    );
+    return images
+      .filter(Boolean)
+      .map((img) => ({ id: img!.id, url: img!.source_url, alt: img!.alt_text }));
+  }
+
+  return (galeria as Array<{ id: number; url: string; alt: string }>).map((img) => ({
+    id: img.id,
+    url: img.url,
+    alt: img.alt,
+  }));
 }
 
 // ── private helpers ────────────────────────────────────────────────────────
