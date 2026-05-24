@@ -76,10 +76,39 @@ const {
       }
 
       function initNav() {
+        const gsap = (window as any).gsap;
         const nav = document.querySelector<HTMLElement>('.nav');
         const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
         const overlay = document.querySelector<HTMLElement>('.overlay');
-        if (!nav || !toggle || !overlay) return;
+        if (!nav || !toggle || !overlay || !gsap) return;
+
+        const links = overlay.querySelectorAll<HTMLElement>('.overlay-nav a');
+
+        // Set initial state — overlay above viewport, links hidden below their clip
+        gsap.set(overlay, { yPercent: -100 });
+        gsap.set(links, { yPercent: 110 });
+
+        let isOpen = false;
+        let tl: any = null;
+
+        const openMenu = () => {
+          if (tl) tl.kill();
+          overlay.classList.add('is-open');
+          tl = gsap.timeline();
+          tl.to(overlay, { yPercent: 0, duration: 0.7, ease: 'expo.inOut' });
+          tl.to(links, { yPercent: 0, duration: 0.75, ease: 'expo.out', stagger: 0.07 }, '-=0.35');
+        };
+
+        const closeMenu = () => {
+          if (tl) tl.kill();
+          toggle.textContent = 'Menu';
+          isOpen = false;
+          tl = gsap.timeline({
+            onComplete: () => overlay.classList.remove('is-open'),
+          });
+          tl.to(links, { yPercent: 110, duration: 0.35, ease: 'expo.in', stagger: { each: 0.05, from: 'end' } });
+          tl.to(overlay, { yPercent: -100, duration: 0.6, ease: 'expo.inOut' }, '-=0.1');
+        };
 
         const onScroll = () => {
           nav.classList.toggle('is-scrolled', window.scrollY > 40);
@@ -87,14 +116,16 @@ const {
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
 
-        const closeMenu = () => {
-          overlay.classList.remove('is-open');
-          toggle.textContent = 'Menú';
-        };
         toggle.addEventListener('click', () => {
-          const open = overlay.classList.toggle('is-open');
-          toggle.textContent = open ? 'Cerrar' : 'Menú';
+          isOpen = !isOpen;
+          if (isOpen) {
+            toggle.textContent = 'Close';
+            openMenu();
+          } else {
+            closeMenu();
+          }
         });
+
         overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
       }
 

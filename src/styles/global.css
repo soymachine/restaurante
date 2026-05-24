@@ -228,12 +228,10 @@ button.btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  clip-path: circle(0% at calc(100% - 6rem) 3rem);
-  transition: clip-path .9s var(--ease);
   pointer-events: none;
+  /* transform and visibility handled by GSAP */
 }
 .overlay.is-open {
-  clip-path: circle(150% at calc(100% - 6rem) 3rem);
   pointer-events: auto;
 }
 .overlay-nav {
@@ -252,16 +250,9 @@ button.btn {
   position: relative;
   padding: .2rem 0;
   letter-spacing: -.02em;
-  transform: translateY(110%);
-  transition: transform .8s var(--ease), color .4s var(--ease);
+  /* transform handled by GSAP; keep only colour transition */
+  transition: color .4s var(--ease);
 }
-.overlay.is-open .overlay-nav a { transform: translateY(0); }
-.overlay-nav li:nth-child(1) a { transition-delay: .15s; }
-.overlay-nav li:nth-child(2) a { transition-delay: .22s; }
-.overlay-nav li:nth-child(3) a { transition-delay: .29s; }
-.overlay-nav li:nth-child(4) a { transition-delay: .36s; }
-.overlay-nav li:nth-child(5) a { transition-delay: .43s; }
-.overlay-nav li:nth-child(6) a { transition-delay: .50s; }
 .overlay-nav a:hover { color: var(--copper-2); font-style: italic; }
 .overlay-nav a::after {
   content: attr(data-num);
