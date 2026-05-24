@@ -1,7 +1,19 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fetchReservationInfo } from '../lib/wp';
+
 const img = (id: string, w = 1600) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+const fallbackInfo = {
+  telefono: '',
+  email: 'hola@bracero.es',
+  horarioComida: '13:00 – 15:30',
+  horarioCena: '20:00 – 23:00',
+  notas: 'Aforo reducido. Recomendamos reservar con antelación, especialmente fines de semana.',
+};
+
+const info = (await fetchReservationInfo()) ?? fallbackInfo;
 ---
 <Layout title="Reservas — Bracero">
   <section class="page-hero">
@@ -14,8 +26,31 @@ const img = (id: string, w = 1600) =>
   <section>
     <div class="wrap grid-2">
       <div>
-        <p class="fade-up" style="color: var(--ink-dim); margin-bottom: 1rem;">Servicio de comida y cena. Confirmamos cada reserva por correo en menos de 24 horas.</p>
-        <p class="fade-up" style="color: var(--ink-dim);">Si quieres reservar la mesa completa (hasta 12 personas) o consultar menús privados, escríbenos directamente a <a href="mailto:hola@bracero.es" style="color: var(--copper-2);">hola@bracero.es</a>.</p>
+        <div class="reservas-info fade-up">
+          {info.horarioComida && (
+            <div class="info-row">
+              <span class="info-label">Comida</span>
+              <span>{info.horarioComida}</span>
+            </div>
+          )}
+          {info.horarioCena && (
+            <div class="info-row">
+              <span class="info-label">Cena</span>
+              <span>{info.horarioCena}</span>
+            </div>
+          )}
+          {info.telefono && (
+            <div class="info-row">
+              <span class="info-label">Teléfono</span>
+              <a href={`tel:${info.telefono.replace(/\s/g, '')}`} style="color: var(--copper-2);">{info.telefono}</a>
+            </div>
+          )}
+        </div>
+
+        {info.notas && (
+          <p class="fade-up" style="color: var(--ink-dim); margin-bottom: 1rem;">{info.notas}</p>
+        )}
+        <p class="fade-up" style="color: var(--ink-dim);">Para grupos (hasta 12 personas) o menús privados, escríbenos a <a href={`mailto:${info.email}`} style="color: var(--copper-2);">{info.email}</a>.</p>
 
         <form class="form-grid fade-up" onsubmit="event.preventDefault(); this.querySelector('.confirm').style.opacity='1';">
           <div class="field">
@@ -64,3 +99,32 @@ const img = (id: string, w = 1600) =>
     </div>
   </section>
 </Layout>
+
+<style>
+  .reservas-info {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    margin-bottom: 1.8rem;
+    padding: 1.4rem 1.8rem;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 4px;
+  }
+  .info-row {
+    display: flex;
+    gap: 1.2rem;
+    font-size: .95rem;
+    color: var(--ink-dim);
+  }
+  .info-label {
+    width: 6rem;
+    flex-shrink: 0;
+    font-weight: 500;
+    color: var(--copper-2);
+    font-family: var(--sans);
+    letter-spacing: .04em;
+    font-size: .8rem;
+    text-transform: uppercase;
+    padding-top: .15em;
+  }
+</style>

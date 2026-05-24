@@ -253,6 +253,7 @@ section {
 .overlay-nav li:nth-child(3) a { transition-delay: .29s; }
 .overlay-nav li:nth-child(4) a { transition-delay: .36s; }
 .overlay-nav li:nth-child(5) a { transition-delay: .43s; }
+.overlay-nav li:nth-child(6) a { transition-delay: .50s; }
 .overlay-nav a:hover { color: var(--copper-2); font-style: italic; }
 .overlay-nav a::after {
   content: attr(data-num);

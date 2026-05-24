@@ -1,19 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
-const img = (id: string, w = 1400) =>
+import { fetchGallery } from '../lib/wp';
+
+const unsplashImg = (id: string, w = 1400) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 
-const shots = [
-  '1414235077428-338989a2e8c0',
-  '1517248135467-4c7edcad34c4',
-  '1559339352-11d035aa65de',
-  '1546069901-ba9599a7e63c',
-  '1466637574441-749b8f19452f',
-  '1438118907704-7718ee9a191a',
-  '1424847651672-bf20a4b0982b',
-  '1551024506-0bccd828d307',
-  '1476124369491-e7addf5db371',
+const fallbackShots = [
+  { url: unsplashImg('1414235077428-338989a2e8c0'), alt: '' },
+  { url: unsplashImg('1517248135467-4c7edcad34c4'), alt: '' },
+  { url: unsplashImg('1559339352-11d035aa65de'), alt: '' },
+  { url: unsplashImg('1546069901-ba9599a7e63c'), alt: '' },
+  { url: unsplashImg('1466637574441-749b8f19452f'), alt: '' },
+  { url: unsplashImg('1438118907704-7718ee9a191a'), alt: '' },
+  { url: unsplashImg('1424847651672-bf20a4b0982b'), alt: '' },
+  { url: unsplashImg('1551024506-0bccd828d307'), alt: '' },
+  { url: unsplashImg('1476124369491-e7addf5db371'), alt: '' },
 ];
+
+const wpGallery = await fetchGallery();
+const shots = wpGallery ?? fallbackShots;
 ---
 <Layout title="Galería — Bracero">
   <section class="page-hero">
@@ -26,9 +31,9 @@ const shots = [
   <section>
     <div class="wrap">
       <div class="gal">
-        {shots.map((id, i) => (
+        {shots.map((shot, i) => (
           <div class={`frame gal-${(i % 6) + 1}`}>
-            <img src={img(id)} alt="" loading="lazy"/>
+            <img src={shot.url} alt={shot.alt} loading="lazy"/>
           </div>
         ))}
       </div>

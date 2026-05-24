@@ -1,46 +1,49 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fetchMenu, type WpMenuCategory } from '../lib/wp';
 
-const categories = [
+const fallback: WpMenuCategory[] = [
   {
-    name: 'Para empezar',
-    desc: 'Pequeños bocados pensados para abrir la mesa y la conversación.',
-    items: [
-      { name: 'Aceitunas en salmuera de cítricos', desc: 'Manzanilla cacereña curada en casa con piel de naranja sanguina.', price: '6' },
-      { name: 'Tartar de atún rojo', desc: 'Encurtidos de la huerta, aceite de hueso ahumado y wasabi fresco.', price: '22' },
-      { name: 'Croquetas de gallina vieja', desc: 'Hechas con caldo de 24 horas. Cinco unidades, ni una más.', price: '14' },
-      { name: 'Tomate en su jugo', desc: 'Tomate raf de Almería, anchoa del Cantábrico, albahaca morada.', price: '16' },
+    nombre: 'Para empezar',
+    descripcion: 'Pequeños bocados pensados para abrir la mesa y la conversación.',
+    platos: [
+      { nombre: 'Aceitunas en salmuera de cítricos', descripcion: 'Manzanilla cacereña curada en casa con piel de naranja sanguina.', precio: '6' },
+      { nombre: 'Tartar de atún rojo', descripcion: 'Encurtidos de la huerta, aceite de hueso ahumado y wasabi fresco.', precio: '22' },
+      { nombre: 'Croquetas de gallina vieja', descripcion: 'Hechas con caldo de 24 horas. Cinco unidades, ni una más.', precio: '14' },
+      { nombre: 'Tomate en su jugo', descripcion: 'Tomate raf de Almería, anchoa del Cantábrico, albahaca morada.', precio: '16' },
     ],
   },
   {
-    name: 'De la huerta',
-    desc: 'Vegetales tratados con la misma intensidad que un buen lomo.',
-    items: [
-      { name: 'Alcachofa a la brasa', desc: 'Carbón de encina, yema curada, romesco ligero.', price: '18' },
-      { name: 'Risotto carnaroli y hongos', desc: 'Boletus del Pirineo, mantequilla noisette, parmesano 36 meses.', price: '24' },
-      { name: 'Berenjena ahumada', desc: 'Miso de garbanzo, granada y semillas tostadas.', price: '17' },
+    nombre: 'De la huerta',
+    descripcion: 'Vegetales tratados con la misma intensidad que un buen lomo.',
+    platos: [
+      { nombre: 'Alcachofa a la brasa', descripcion: 'Carbón de encina, yema curada, romesco ligero.', precio: '18' },
+      { nombre: 'Risotto carnaroli y hongos', descripcion: 'Boletus del Pirineo, mantequilla noisette, parmesano 36 meses.', precio: '24' },
+      { nombre: 'Berenjena ahumada', descripcion: 'Miso de garbanzo, granada y semillas tostadas.', precio: '17' },
     ],
   },
   {
-    name: 'Del fuego',
-    desc: 'Carne y pescado pasados por brasa. Tiempo, sal, paciencia.',
-    items: [
-      { name: 'Cordero a doce horas', desc: 'Lechal de Lanzarote, hierbas serranas, miel de romero.', price: '32' },
-      { name: 'Lubina salvaje en sal', desc: 'Costra de sal, hinojo, limón confitado, verduras de temporada.', price: '36' },
-      { name: 'Solomillo de vaca rubia', desc: 'Maduración 45 días, jugo concentrado, patata soufflé.', price: '38' },
-      { name: 'Pulpo a la brasa', desc: 'Patata violeta, alioli ligero de azafrán.', price: '28' },
+    nombre: 'Del fuego',
+    descripcion: 'Carne y pescado pasados por brasa. Tiempo, sal, paciencia.',
+    platos: [
+      { nombre: 'Cordero a doce horas', descripcion: 'Lechal de Lanzarote, hierbas serranas, miel de romero.', precio: '32' },
+      { nombre: 'Lubina salvaje en sal', descripcion: 'Costra de sal, hinojo, limón confitado, verduras de temporada.', precio: '36' },
+      { nombre: 'Solomillo de vaca rubia', descripcion: 'Maduración 45 días, jugo concentrado, patata soufflé.', precio: '38' },
+      { nombre: 'Pulpo a la brasa', descripcion: 'Patata violeta, alioli ligero de azafrán.', precio: '28' },
     ],
   },
   {
-    name: 'Para terminar',
-    desc: 'Postres pequeños, intensos, hechos con la pastelera del barrio.',
-    items: [
-      { name: 'Soufflé de chocolate', desc: 'Cacao 72% de Madagascar, helado de vainilla bourbon, polvo de oro.', price: '12' },
-      { name: 'Tarta de queso fundida', desc: 'Idiazábal, frutos rojos macerados en vinagre de Jerez.', price: '11' },
-      { name: 'Cítricos en almíbar', desc: 'Naranja sanguina, pomelo, kumquat, sorbete de mandarina.', price: '10' },
+    nombre: 'Para terminar',
+    descripcion: 'Postres pequeños, intensos, hechos con la pastelera del barrio.',
+    platos: [
+      { nombre: 'Soufflé de chocolate', descripcion: 'Cacao 72% de Madagascar, helado de vainilla bourbon, polvo de oro.', precio: '12' },
+      { nombre: 'Tarta de queso fundida', descripcion: 'Idiazábal, frutos rojos macerados en vinagre de Jerez.', precio: '11' },
+      { nombre: 'Cítricos en almíbar', descripcion: 'Naranja sanguina, pomelo, kumquat, sorbete de mandarina.', precio: '10' },
     ],
   },
 ];
+
+const categories = (await fetchMenu()) ?? fallback;
 ---
 
 <Layout title="Menú — Bracero">
@@ -56,15 +59,15 @@ const categories = [
     {categories.map((cat) => (
       <article class="menu-cat fade-up">
         <header>
-          <h2>{cat.name}</h2>
-          <p class="cat-desc">{cat.desc}</p>
+          <h2>{cat.nombre}</h2>
+          <p class="cat-desc">{cat.descripcion}</p>
         </header>
         <div class="menu-items">
-          {cat.items.map((it) => (
+          {cat.platos.map((it) => (
             <div class="menu-item">
-              <h3>{it.name}</h3>
-              <div class="price">{it.price} €</div>
-              <p class="desc">{it.desc}</p>
+              <h3>{it.nombre}</h3>
+              <div class="price">{it.precio} €</div>
+              <p class="desc">{it.descripcion}</p>
             </div>
           ))}
         </div>
