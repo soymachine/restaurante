@@ -58,8 +58,8 @@ const {
         const move = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY; };
         window.addEventListener('mousemove', move);
         const tick = () => {
-          x += (tx - x) * 0.18;
-          y += (ty - y) * 0.18;
+          x += (tx - x) * 0.3;
+          y += (ty - y) * 0.3;
           cursor.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
           requestAnimationFrame(tick);
         };

@@ -122,20 +122,19 @@ const dishes = [
       const ScrollTrigger = (window as any).ScrollTrigger;
       if (!gsap || !ScrollTrigger) return;
 
-      // Hero entrance: split words of title manually
+      // Hero entrance: animate line by line to preserve <em> tags
       const title = document.querySelector<HTMLElement>('[data-hero-title]');
       if (title) {
-        const html = title.innerHTML;
-        const parts = html.split('<br>');
-        title.innerHTML = parts.map((line) => {
-          const words = line.trim().split(/\s+/);
-          return words.map((w) => `<span style="display:inline-block;overflow:hidden;vertical-align:top;"><span class="hero-w" style="display:inline-block;transform:translateY(110%);">${w}&nbsp;</span></span>`).join('');
-        }).join('<br>');
+        const html = title.innerHTML.replace(/\s*data-astro-\S+="[^"]*"/g, '');
+        const lines = html.split(/<br\s*\/?>/i).map((l) => l.trim()).filter(Boolean);
+        title.innerHTML = lines
+          .map((line) => `<span style="display:block;overflow:hidden;padding-bottom:0.12em;"><span class="hero-w" style="display:block;transform:translateY(110%);">${line}</span></span>`)
+          .join('');
         gsap.to('.hero-w', {
           y: 0,
           duration: 1.4,
           ease: 'expo.out',
-          stagger: 0.08,
+          stagger: 0.18,
           delay: 0.1,
         });
       }
