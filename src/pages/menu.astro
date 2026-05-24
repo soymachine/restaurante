@@ -1,54 +1,57 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fetchMenu, type WpMenuCategory } from '../lib/wp';
 
-const categories = [
+const fallback: WpMenuCategory[] = [
   {
-    name: 'Para empezar',
-    desc: 'Pequeños bocados pensados para abrir la mesa y la conversación.',
-    items: [
-      { name: 'Aceitunas en salmuera de cítricos', desc: 'Manzanilla cacereña curada en casa con piel de naranja sanguina.', price: '6' },
-      { name: 'Tartar de atún rojo', desc: 'Encurtidos de la huerta, aceite de hueso ahumado y wasabi fresco.', price: '22' },
-      { name: 'Croquetas de gallina vieja', desc: 'Hechas con caldo de 24 horas. Cinco unidades, ni una más.', price: '14' },
-      { name: 'Tomate en su jugo', desc: 'Tomate raf de Almería, anchoa del Cantábrico, albahaca morada.', price: '16' },
+    nombre: 'To start',
+    descripcion: 'Small bites designed to open the table and the conversation.',
+    platos: [
+      { nombre: 'Citrus-brined olives', descripcion: 'House-cured manzanilla with blood orange zest.', precio: '6' },
+      { nombre: 'Bluefin tuna tartare', descripcion: 'Garden pickles, smoked bone oil and fresh wasabi.', precio: '22' },
+      { nombre: 'Free-range hen croquettes', descripcion: 'Made with 24-hour stock. Five pieces, not one more.', precio: '14' },
+      { nombre: 'Tomato in its own juice', descripcion: 'Raf tomato, Cantabrian anchovy, purple basil.', precio: '16' },
     ],
   },
   {
-    name: 'De la huerta',
-    desc: 'Vegetales tratados con la misma intensidad que un buen lomo.',
-    items: [
-      { name: 'Alcachofa a la brasa', desc: 'Carbón de encina, yema curada, romesco ligero.', price: '18' },
-      { name: 'Risotto carnaroli y hongos', desc: 'Boletus del Pirineo, mantequilla noisette, parmesano 36 meses.', price: '24' },
-      { name: 'Berenjena ahumada', desc: 'Miso de garbanzo, granada y semillas tostadas.', price: '17' },
+    nombre: 'From the garden',
+    descripcion: 'Vegetables treated with the same intensity as a fine cut of meat.',
+    platos: [
+      { nombre: 'Grilled artichoke', descripcion: 'Holm oak charcoal, cured egg yolk, light romesco.', precio: '18' },
+      { nombre: 'Carnaroli and mushroom risotto', descripcion: 'Pyrenean boletus, noisette butter, 36-month parmesan.', precio: '24' },
+      { nombre: 'Smoked aubergine', descripcion: 'Chickpea miso, pomegranate and toasted seeds.', precio: '17' },
     ],
   },
   {
-    name: 'Del fuego',
-    desc: 'Carne y pescado pasados por brasa. Tiempo, sal, paciencia.',
-    items: [
-      { name: 'Cordero a doce horas', desc: 'Lechal de Lanzarote, hierbas serranas, miel de romero.', price: '32' },
-      { name: 'Lubina salvaje en sal', desc: 'Costra de sal, hinojo, limón confitado, verduras de temporada.', price: '36' },
-      { name: 'Solomillo de vaca rubia', desc: 'Maduración 45 días, jugo concentrado, patata soufflé.', price: '38' },
-      { name: 'Pulpo a la brasa', desc: 'Patata violeta, alioli ligero de azafrán.', price: '28' },
+    nombre: 'From the fire',
+    descripcion: 'Meat and fish passed through the coals. Time, salt, patience.',
+    platos: [
+      { nombre: 'Twelve-hour lamb', descripcion: 'Milk-fed lamb, mountain herbs, rosemary honey.', precio: '32' },
+      { nombre: 'Wild sea bass in salt crust', descripcion: 'Salt crust, fennel, confit lemon, seasonal vegetables.', precio: '36' },
+      { nombre: 'Rubia Gallega beef tenderloin', descripcion: '45-day aged, concentrated jus, soufflé potato.', precio: '38' },
+      { nombre: 'Grilled octopus', descripcion: 'Purple potato, light saffron aioli.', precio: '28' },
     ],
   },
   {
-    name: 'Para terminar',
-    desc: 'Postres pequeños, intensos, hechos con la pastelera del barrio.',
-    items: [
-      { name: 'Soufflé de chocolate', desc: 'Cacao 72% de Madagascar, helado de vainilla bourbon, polvo de oro.', price: '12' },
-      { name: 'Tarta de queso fundida', desc: 'Idiazábal, frutos rojos macerados en vinagre de Jerez.', price: '11' },
-      { name: 'Cítricos en almíbar', desc: 'Naranja sanguina, pomelo, kumquat, sorbete de mandarina.', price: '10' },
+    nombre: 'To finish',
+    descripcion: 'Small, intense desserts, made with the neighbourhood pastry chef.',
+    platos: [
+      { nombre: 'Chocolate soufflé', descripcion: '72% Madagascar cacao, bourbon vanilla ice cream, gold dust.', precio: '12' },
+      { nombre: 'Melted cheese tart', descripcion: 'Idiazábal, red fruits macerated in sherry vinegar.', precio: '11' },
+      { nombre: 'Citrus in syrup', descripcion: 'Blood orange, grapefruit, kumquat, mandarin sorbet.', precio: '10' },
     ],
   },
 ];
+
+const categories = (await fetchMenu()) ?? fallback;
 ---
 
 <Layout title="Menú — Bracero">
   <section class="page-hero">
     <div class="wrap">
-      <span class="eyebrow">— 03 / Menú</span>
-      <h1 data-reveal-lines>Lo que <em>hoy</em> nos parece bueno.</h1>
-      <p class="fade-up" style="margin-top: 1.6rem; color: var(--ink-dim);">La carta cambia con la temporada. Esto es lo que cocinamos esta semana.</p>
+      <span class="eyebrow">— 03 / Menu</span>
+      <h1 data-reveal-lines>What we think is <em>good</em> today.</h1>
+      <p class="fade-up" style="margin-top: 1.6rem; color: var(--ink-dim);">The menu changes with the season. This is what we are cooking this week.</p>
     </div>
   </section>
 
@@ -56,15 +59,15 @@ const categories = [
     {categories.map((cat) => (
       <article class="menu-cat fade-up">
         <header>
-          <h2>{cat.name}</h2>
-          <p class="cat-desc">{cat.desc}</p>
+          <h2>{cat.nombre}</h2>
+          <p class="cat-desc">{cat.descripcion}</p>
         </header>
         <div class="menu-items">
-          {cat.items.map((it) => (
+          {cat.platos.map((it) => (
             <div class="menu-item">
-              <h3>{it.name}</h3>
-              <div class="price">{it.price} €</div>
-              <p class="desc">{it.desc}</p>
+              <h3>{it.nombre}</h3>
+              <div class="price">{it.precio} €</div>
+              <p class="desc">{it.descripcion}</p>
             </div>
           ))}
         </div>
@@ -74,8 +77,8 @@ const categories = [
 
   <section class="cta">
     <div class="wrap">
-      <h2 data-reveal-lines>Hambre <em>ya</em>.</h2>
-      <a href={`${import.meta.env.BASE_URL}reservas`} class="btn fade-up" style="margin-top: 2rem;">Reservar mesa <span class="arrow">→</span></a>
+      <h2 data-reveal-lines>Hungry <em>already</em>.</h2>
+      <a href={`${import.meta.env.BASE_URL}reservas`} class="btn fade-up" style="margin-top: 2rem;">Reserve a table <span class="arrow">→</span></a>
     </div>
   </section>
 </Layout>

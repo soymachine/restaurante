@@ -1,0 +1,200 @@
+/**
+ * WordPress REST API client
+ *
+ * SETUP REQUERIDO EN WORDPRESS
+ * ────────────────────────────
+ * Plugins:
+ *   1. Advanced Custom Fields (gratis, wordpress.org)
+ *   2. Custom Post Type UI (gratis, wordpress.org)
+ *
+ * NO se necesita "ACF to REST API": ACF 5.11+ expone campos nativamente con
+ * "Show in REST API: Yes" en el field group. Para la Options Page se usa el
+ * endpoint propio /bracero/v1/options definido en functions.php del tema.
+ *
+ * Custom Post Type vía CPT UI:
+ *   Slug: plato | Show in REST: true | Supports: title, excerpt
+ *
+ * Taxonomía vía CPT UI:
+ *   Slug: categoria_plato | Asociada a: plato | Show in REST: true
+ *   Crear las categorías: "Para empezar", "De la huerta", "Del fuego", "Para terminar"
+ *
+ * ACF → Field Groups:
+ *   Grupo "Datos del plato" → ubicación: Post Type = plato
+ *     - precio (Field type: Text, Field key: precio)
+ *
+ *   Grupo "Ajustes del restaurante" → ubicación: Options Page
+ *     Primero registrar la Options Page en functions.php del tema:
+ *       acf_add_options_page(['page_title'=>'Ajustes','menu_slug'=>'bracero-ajustes']);
+ *     Campos:
+ *       - telefono        (Text)
+ *       - email_contacto  (Email)
+ *       - horario_comida  (Text)   e.g. "13:00 – 15:30"
+ *       - horario_cena    (Text)   e.g. "20:00 – 23:00"
+ *       - notas_reservas  (Textarea)
+ *       - galeria         (Gallery)
+ */
+
+const WP = (import.meta.env.WORDPRESS_API_URL ?? '').replace(/\/$/, '');
+
+// ── helpers ────────────────────────────────────────────────────────────────
+
+function stripTags(html: string): string {
+  return html.replace(/<[^>]+>/g, '').trim();
+}
+
+async function wpGet<T>(path: string): Promise<T | null> {
+  if (!WP) return null;
+  try {
+    const res = await fetch(`${WP}/wp-json${path}`);
+    if (!res.ok) return null;
+    return res.json() as Promise<T>;
+  } catch {
+    console.warn(`[WP] unreachable – ${WP}/wp-json${path}`);
+    return null;
+  }
+}
+
+// ── types ──────────────────────────────────────────────────────────────────
+
+export interface WpMenuItem {
+  nombre: string;
+  descripcion: string;
+  precio: string;
+}
+
+export interface WpMenuCategory {
+  nombre: string;
+  descripcion: string;
+  platos: WpMenuItem[];
+}
+
+export interface WpPost {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  content: string;
+  featuredImage: { url: string; alt: string } | null;
+}
+
+export interface WpReservationInfo {
+  telefono: string;
+  email: string;
+  horarioComida: string;
+  horarioCena: string;
+  notas: string;
+}
+
+export interface WpGalleryImage {
+  id: number;
+  url: string;
+  alt: string;
+}
+
+// ── raw WP types ───────────────────────────────────────────────────────────
+
+interface RawTerm {
+  id: number;
+  name: string;
+  description: string;
+}
+
+interface RawPlato {
+  id: number;
+  title: { rendered: string };
+  excerpt: { rendered: string };
+  categoria_plato: number[];
+  acf?: { precio?: string };
+}
+
+interface RawPost {
+  slug: string;
+  title: { rendered: string };
+  date: string;
+  excerpt: { rendered: string };
+  content: { rendered: string };
+  _embedded?: {
+    'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string }>;
+  };
+}
+
+// Respuesta del endpoint propio /bracero/v1/options (definido en functions.php)
+interface RawOptions {
+  telefono?: string;
+  email_contacto?: string;
+  horario_comida?: string;
+  horario_cena?: string;
+  notas_reservas?: string;
+  galeria?: Array<{ id: number; url: string; alt: string }>;
+}
+
+// ── fetchers ───────────────────────────────────────────────────────────────
+
+export async function fetchMenu(): Promise<WpMenuCategory[] | null> {
+  const [categorias, platos] = await Promise.all([
+    wpGet<RawTerm[]>('/wp/v2/categoria_plato?per_page=20&orderby=id&order=asc'),
+    wpGet<RawPlato[]>('/wp/v2/platos?per_page=100&_fields=id,title,excerpt,categoria_plato,acf'),
+  ]);
+  if (!categorias || !platos) return null;
+
+  return categorias.map((cat) => ({
+    nombre: cat.name,
+    descripcion: cat.description,
+    platos: platos
+      .filter((p) => p.categoria_plato.includes(cat.id))
+      .map((p) => ({
+        nombre: p.title.rendered,
+        descripcion: stripTags(p.excerpt.rendered),
+        precio: p.acf?.precio ?? '',
+      })),
+  }));
+}
+
+export async function fetchPosts(perPage = 20): Promise<WpPost[]> {
+  const posts = await wpGet<RawPost[]>(
+    `/wp/v2/posts?per_page=${perPage}&_embed=wp:featuredmedia`,
+  );
+  if (!posts) return [];
+  return posts.map(mapPost);
+}
+
+export async function fetchPost(slug: string): Promise<WpPost | null> {
+  const posts = await wpGet<RawPost[]>(
+    `/wp/v2/posts?slug=${encodeURIComponent(slug)}&_embed=wp:featuredmedia`,
+  );
+  if (!posts?.length) return null;
+  return { ...mapPost(posts[0]), content: posts[0].content.rendered };
+}
+
+export async function fetchReservationInfo(): Promise<WpReservationInfo | null> {
+  const opts = await wpGet<RawOptions>('/bracero/v1/options');
+  if (!opts) return null;
+  return {
+    telefono: opts.telefono ?? '',
+    email: opts.email_contacto ?? '',
+    horarioComida: opts.horario_comida ?? '',
+    horarioCena: opts.horario_cena ?? '',
+    notas: opts.notas_reservas ?? '',
+  };
+}
+
+export async function fetchGallery(): Promise<WpGalleryImage[] | null> {
+  const opts = await wpGet<RawOptions>('/bracero/v1/options');
+  const galeria = opts?.galeria;
+  if (!galeria?.length) return null;
+  return galeria.map((img) => ({ id: img.id, url: img.url, alt: img.alt }));
+}
+
+// ── private helpers ────────────────────────────────────────────────────────
+
+function mapPost(p: RawPost): WpPost {
+  const media = p._embedded?.['wp:featuredmedia']?.[0];
+  return {
+    slug: p.slug,
+    title: p.title.rendered,
+    date: p.date,
+    excerpt: stripTags(p.excerpt.rendered),
+    content: '',
+    featuredImage: media ? { url: media.source_url, alt: media.alt_text } : null,
+  };
+}
