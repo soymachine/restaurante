@@ -7,10 +7,10 @@ const img = (id: string, w = 1600) =>
 
 const fallbackInfo = {
   telefono: '',
-  email: 'hola@bracero.es',
+  email: 'hello@bracero.pt',
   horarioComida: '13:00 – 15:30',
   horarioCena: '20:00 – 23:00',
-  notas: 'Aforo reducido. Recomendamos reservar con antelación, especialmente fines de semana.',
+  notas: 'Limited seating. We recommend booking in advance, especially at weekends.',
 };
 
 const info = (await fetchReservationInfo()) ?? fallbackInfo;
@@ -18,8 +18,8 @@ const info = (await fetchReservationInfo()) ?? fallbackInfo;
 <Layout title="Reservas — Bracero">
   <section class="page-hero">
     <div class="wrap">
-      <span class="eyebrow">— 05 / Reservas</span>
-      <h1 data-reveal-lines>Una mesa, <em>tu</em> noche.</h1>
+      <span class="eyebrow">— 05 / Reservations</span>
+      <h1 data-reveal-lines>A table, <em>your</em> evening.</h1>
     </div>
   </section>
 
@@ -29,19 +29,19 @@ const info = (await fetchReservationInfo()) ?? fallbackInfo;
         <div class="reservas-info fade-up">
           {info.horarioComida && (
             <div class="info-row">
-              <span class="info-label">Comida</span>
+              <span class="info-label">Lunch</span>
               <span>{info.horarioComida}</span>
             </div>
           )}
           {info.horarioCena && (
             <div class="info-row">
-              <span class="info-label">Cena</span>
+              <span class="info-label">Dinner</span>
               <span>{info.horarioCena}</span>
             </div>
           )}
           {info.telefono && (
             <div class="info-row">
-              <span class="info-label">Teléfono</span>
+              <span class="info-label">Phone</span>
               <a href={`tel:${info.telefono.replace(/\s/g, '')}`} style="color: var(--copper-2);">{info.telefono}</a>
             </div>
           )}
@@ -50,46 +50,46 @@ const info = (await fetchReservationInfo()) ?? fallbackInfo;
         {info.notas && (
           <p class="fade-up" style="color: var(--ink-dim); margin-bottom: 1rem;">{info.notas}</p>
         )}
-        <p class="fade-up" style="color: var(--ink-dim);">Para grupos (hasta 12 personas) o menús privados, escríbenos a <a href={`mailto:${info.email}`} style="color: var(--copper-2);">{info.email}</a>.</p>
+        <p class="fade-up" style="color: var(--ink-dim);">For groups (up to 12 guests) or private menus, write to us at <a href={`mailto:${info.email}`} style="color: var(--copper-2);">{info.email}</a>.</p>
 
         <form class="form-grid fade-up" onsubmit="event.preventDefault(); this.querySelector('.confirm').style.opacity='1';">
           <div class="field">
-            <label for="name">Nombre</label>
+            <label for="name">Name</label>
             <input id="name" type="text" required />
           </div>
           <div class="field">
-            <label for="email">Correo</label>
+            <label for="email">Email</label>
             <input id="email" type="email" required />
           </div>
           <div class="field">
-            <label for="date">Fecha</label>
+            <label for="date">Date</label>
             <input id="date" type="date" required />
           </div>
           <div class="field">
-            <label for="time">Hora</label>
+            <label for="time">Time</label>
             <select id="time">
               <option>13:00</option><option>13:30</option><option>14:00</option><option>14:30</option>
               <option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option><option>22:00</option>
             </select>
           </div>
           <div class="field">
-            <label for="people">Comensales</label>
+            <label for="people">Guests</label>
             <select id="people">
               <option>1</option><option>2</option><option>3</option><option>4</option>
               <option>5</option><option>6</option><option>7</option><option>8</option>
             </select>
           </div>
           <div class="field">
-            <label for="phone">Teléfono</label>
+            <label for="phone">Phone</label>
             <input id="phone" type="tel" />
           </div>
           <div class="field field-full">
-            <label for="notes">Notas (alergias, ocasión...)</label>
+            <label for="notes">Notes (allergies, occasion...)</label>
             <textarea id="notes" rows="3"></textarea>
           </div>
           <div class="form-submit">
-            <button class="btn" type="submit">Confirmar solicitud <span class="arrow">→</span></button>
-            <p class="confirm" style="opacity: 0; color: var(--copper-2); margin-top: 1.5rem; font-family: var(--serif); font-style: italic; transition: opacity .6s var(--ease);">Recibido. Te escribimos en breve.</p>
+            <button class="btn" type="submit">Confirm request <span class="arrow">→</span></button>
+            <p class="confirm" style="opacity: 0; color: var(--copper-2); margin-top: 1.5rem; font-family: var(--serif); font-style: italic; transition: opacity .6s var(--ease);">Received. We'll be in touch shortly.</p>
           </div>
         </form>
       </div>

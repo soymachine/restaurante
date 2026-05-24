@@ -14,11 +14,11 @@ function formatDate(iso: string) {
 }
 ---
 
-<Layout title="Novedades — Bracero" description="Últimas noticias y novedades de Bracero.">
+<Layout title="News — Bracero" description="Latest news from Bracero.">
   <section class="page-hero">
     <div class="wrap">
-      <span class="eyebrow">— 06 / Novedades</span>
-      <h1 data-reveal-lines>Lo <em>último</em> de la casa.</h1>
+      <span class="eyebrow">— 06 / News</span>
+      <h1 data-reveal-lines>The <em>latest</em> from the house.</h1>
     </div>
   </section>
 
@@ -26,7 +26,7 @@ function formatDate(iso: string) {
     <div class="wrap">
       {posts.length === 0 ? (
         <p style="color: var(--ink-dim); padding: 4rem 0; text-align: center; font-family: var(--serif); font-style: italic; font-size: 1.2rem;">
-          Pronto habrá novedades por aquí.
+          News coming soon.
         </p>
       ) : (
         <div class="posts-grid">
@@ -41,7 +41,7 @@ function formatDate(iso: string) {
                 <time class="post-date" datetime={post.date}>{formatDate(post.date)}</time>
                 <h2 set:html={post.title} />
                 {post.excerpt && <p class="post-excerpt">{post.excerpt}</p>}
-                <span class="post-more">Leer más <span class="arrow">→</span></span>
+                <span class="post-more">Read more <span class="arrow">→</span></span>
               </div>
             </a>
           ))}

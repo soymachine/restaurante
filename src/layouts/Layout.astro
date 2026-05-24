@@ -10,8 +10,8 @@ interface Props {
 }
 
 const {
-  title = 'Bracero — Cocina de raíz',
-  description = 'Restaurante de cocina contemporánea con producto de temporada. Reservas y carta.',
+  title = 'Bracero — Root Cooking',
+  description = 'Contemporary restaurant with seasonal produce, fire and time. Reservations and menu.',
 } = Astro.props;
 ---
 
@@ -195,12 +195,12 @@ const {
     <!-- Off-canvas menu overlay -->
     <div class="overlay" id="menu-overlay">
       <ul class="overlay-nav">
-        <li><a href={import.meta.env.BASE_URL} data-num="01">Inicio</a></li>
-        <li><a href={`${import.meta.env.BASE_URL}historia`} data-num="02">Historia</a></li>
-        <li><a href={`${import.meta.env.BASE_URL}menu`} data-num="03">Menú</a></li>
-        <li><a href={`${import.meta.env.BASE_URL}galeria`} data-num="04">Galería</a></li>
-        <li><a href={`${import.meta.env.BASE_URL}reservas`} data-num="05">Reservas</a></li>
-        <li><a href={`${import.meta.env.BASE_URL}noticias`} data-num="06">Novedades</a></li>
+        <li><a href={import.meta.env.BASE_URL} data-num="01">Home</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}historia`} data-num="02">Story</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}menu`} data-num="03">Menu</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}galeria`} data-num="04">Gallery</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}reservas`} data-num="05">Reservations</a></li>
+        <li><a href={`${import.meta.env.BASE_URL}noticias`} data-num="06">News</a></li>
       </ul>
     </div>
   </body>
