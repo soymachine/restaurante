@@ -22,8 +22,8 @@
  *     - precio (Field type: Text, Field key: precio)
  *     Show in REST API: Yes
  *
- *   Grupo "Restaurant Settings" → ubicación: Page = "Bracero Settings"
- *     (crear Page con slug "bracero-settings", publicada, sin añadir al menú)
+ *   Grupo "Restaurant Settings" → ubicación: Page = "EN Settings"
+ *     (crear Page con slug "en-settings", publicada, sin añadir al menú)
  *     Show in REST API: Yes
  *     Campos:
  *       - telefono        (Text)
@@ -118,7 +118,7 @@ interface RawPost {
   };
 }
 
-// ACF fields from the "Bracero Settings" page (slug: bracero-settings)
+// ACF fields from the "EN Settings" page (slug: en-settings)
 interface RawSettings {
   acf?: {
     telefono?: string;
@@ -139,7 +139,7 @@ interface RawGaleriaItem {
 // Fetches the settings page once per build
 async function fetchSettings(): Promise<RawSettings['acf'] | null> {
   const pages = await wpGet<RawSettings[]>(
-    '/wp/v2/pages?slug=bracero-settings&_fields=acf',
+    '/wp/v2/pages?slug=en-settings&_fields=acf',
   );
   return pages?.[0]?.acf ?? null;
 }

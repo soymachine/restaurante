@@ -7,7 +7,7 @@ const img = (id: string, w = 1600) =>
 
 const fallbackInfo = {
   telefono: '',
-  email: 'hello@bracero.pt',
+  email: 'hello@en.pt',
   horarioComida: '13:00 – 15:30',
   horarioCena: '20:00 – 23:00',
   notas: 'Limited seating. We recommend booking in advance, especially at weekends.',
@@ -15,7 +15,7 @@ const fallbackInfo = {
 
 const info = (await fetchReservationInfo()) ?? fallbackInfo;
 ---
-<Layout title="Reservas — Bracero">
+<Layout title="Reservas — EN">
   <section class="page-hero">
     <div class="wrap">
       <span class="eyebrow">— 05 / Reservations</span>
