@@ -223,6 +223,7 @@ button.btn {
 .overlay {
   position: fixed;
   inset: 0;
+  overflow: hidden;
   background: var(--bg-2);
   z-index: 90;
   display: flex;
